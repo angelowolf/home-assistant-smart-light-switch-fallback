@@ -130,7 +130,6 @@ let TIMEOUT_MS = 2200;
 let confirmed = Virtual.getHandle("boolean:" + CONFIRMED_ID);
 
 Shelly.addEventHandler(function(ev) {
-  print("se ejecuto evento: " + ev.info.event + " " + ev.component);
   if (ev.component === "input:" + SW_INPUT && ev.info.event === "toggle") {
     handleToggle();
   }
@@ -142,19 +141,15 @@ function handleToggle() {
   // Get relay status synchronously
   let swStatus = Shelly.getComponentStatus("switch:" + SW_OUTPUT);
   let relayIsOn = !!swStatus.output;
-  print("status relay: " + relayIsOn);
   
   if (!relayIsOn) {
-    print("se enciende rele");
     // If relay is OFF -> turn it ON
     Shelly.call("Switch.Set", { id: SW_OUTPUT, on: true });
     return;
   }
 
   Timer.set(TIMEOUT_MS, false, function() {
-    print("status confirm "+ confirmed.getValue());
     if (!confirmed.getValue()) {
-      print("se apaga rele")
       // Not confirmed -> turn relay OFF
       Shelly.call("Switch.Set", { id: SW_OUTPUT, on: false });
     }
